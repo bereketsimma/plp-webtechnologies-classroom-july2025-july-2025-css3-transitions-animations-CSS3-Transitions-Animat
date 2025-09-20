@@ -1,36 +1,38 @@
-  // ----------- JOB CARD CLICK ----------
-  const jobCards = document.querySelectorAll('.job-card[data-job]');
+document.addEventListener("DOMContentLoaded", function() {
+
+  // 1️⃣ Animate welcome button when clicked
+  const welcomeBtn = document.getElementById('welcome-btn');
+  if (welcomeBtn) {
+    welcomeBtn.addEventListener('click', () => {
+      alert("Welcome! Scroll to see available jobs!");
+      welcomeBtn.style.transform = "scale(1.1)";
+      setTimeout(() => welcomeBtn.style.transform = "scale(1)", 300);
+    });
+  }
+
+  // 2️⃣ Job Card click - store selected job and open apply page
+  const jobCards = document.querySelectorAll('.job-card');
   jobCards.forEach(card => {
-    card.addEventListener('click', function() {
-      const jobName = card.dataset.job || "Unknown Job";
-      localStorage.setItem('selectedJob', jobName);
+    card.addEventListener('click', () => {
+      const jobTitle = card.getAttribute('data-job');
+      localStorage.setItem('selectedJob', jobTitle);
       window.location.href = 'apply.html';
     });
   });
 
-  // ----------- WELCOME BUTTON ----------
-  const welcomeBtn = document.getElementById('welcome-btn');
-  if (welcomeBtn) {
-    welcomeBtn.addEventListener('click', () => {
-      document.querySelector('.job-grid').scrollIntoView({ behavior: 'smooth' });
-    });
+  // 3️⃣ Apply Page - Show selected job
+  const selectedJobEl = document.getElementById('selectedJob');
+  if (selectedJobEl) {
+    const selectedJob = localStorage.getItem('selectedJob') || "None";
+    selectedJobEl.textContent = "Selected Job: " + selectedJob;
   }
 
-
-document.addEventListener("DOMContentLoaded", function() {
-
-  // Show selected job from localStorage
-  const selectedJobEl = document.getElementById('selectedJob');
-  const selectedJob = localStorage.getItem('selectedJob') || "None";
-  selectedJobEl.textContent = "Selected Job: " + selectedJob;
-
-  // FORM VALIDATION
+  // 4️⃣ Form Validation Function
   const form = document.getElementById('applyForm');
-  if (!form) return; // stop if no form on page
+  if (!form) return;
 
   const inputs = form.querySelectorAll('input');
 
-  // Real-time validation
   inputs.forEach(input => {
     input.addEventListener('input', () => validateField(input));
     input.addEventListener('blur', () => validateField(input));
@@ -90,19 +92,16 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   form.addEventListener('submit', function(e) {
-    e.preventDefault(); // prevent page reload
+    e.preventDefault();
     let valid = true;
-
     inputs.forEach(input => {
       if (!validateField(input)) valid = false;
     });
-
     if (valid) {
       alert("Application submitted successfully!");
       form.reset();
       inputs.forEach(input => input.classList.remove('invalid'));
-      const spans = form.querySelectorAll('.error-msg');
-      spans.forEach(span => span.textContent = '');
+      form.querySelectorAll('.error-msg').forEach(span => span.textContent = '');
     }
   });
 
